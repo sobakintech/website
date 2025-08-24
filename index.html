@@ -3,34 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>sobakintech</title>
 
-    <!-- discord embed -->
     <meta property="og:title" content="sobakintech">
     <meta property="og:url" content="https://sobakintech.xyz">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://sobakintech.xyz/assets/embed.png">
-    
-    <script defer data-domain="sobakintech.xyz" src="https://analytics.sobakintech.xyz/js/script.hash.outbound-links.tagged-events.js"></script>
+    <meta property="og:description" content="">
 
     <link rel="shortcut icon" href="assets/favicon.png" type="image/x-icon">
-    
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        iframe {
-            width: 100vw;
-            height: 100vh;
-            border: none;
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=12345">
 </head>
 <body>
-    <iframe src="https://e-z.bio/sobakintech" frameborder="0"></iframe>
+    <div class="terminal">
+        <div class="top-nav">
+            <button class="nav-link active" data-page="home">
+                <i class="fas fa-home"></i> home
+            </button>
+            <span class="separator">|</span>
+            <button class="nav-link" data-page="projects">
+                <i class="fas fa-code"></i> projects
+            </button>
+        </div>
+
+        <div class="terminal-content">
+            <div id="home-page" class="page active">
+                <div class="info-section">
+                    <h1 class="terminal-title"><span class="underline-text">sobakintech</span></h1>
+                    <p class="terminal-description">developer & tech enthusiast</p>
+                </div>
+
+                <div class="discord-activity" id="discord-activity">
+                    <div class="activity-details" id="activity-details" style="display: none;">
+                        <div class="activity-name" id="activity-name"></div>
+                        <div class="activity-description" id="activity-description"></div>
+                        <div class="activity-time" id="activity-time"></div>
+                        <div class="activity-progress" id="activity-progress" style="display: none;">
+                            <div class="progress-times">
+                                <span class="progress-current" id="activity-progress-current">0:00</span>
+                                <span class="progress-total" id="activity-progress-total">0:00</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="activity-progress-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-extras" id="activity-extras">
+                        <button id="extras-toggle" class="extras-toggle" type="button">+ more activities</button>
+                        <div class="extras-list" id="extras-list"></div>
+                    </div>
+
+                    <div class="discord-button-container">
+                        <a href="https://discord.com/users/745203026335236178" target="_blank" class="discord-button">
+                            <i class="fab fa-discord"></i> add on discord
+                        </a>
+                    </div>
+                </div>
+
+                <div class="socials-section">
+                    <a href="https://github.com/sobakintech" target="_blank" class="social-link">
+                        <i class="fab fa-github"></i> <span class="social-label">github</span>
+                    </a>
+                    <span class="separator">|</span>
+                    <a href="https://tiktok.com/@sobakintech" target="_blank" class="social-link">
+                        <i class="fab fa-tiktok"></i> <span class="social-label">tiktok</span>
+                    </a>
+                    <span class="separator">|</span>
+                    <a href="https://ko-fi.com/sobakintech" target="_blank" class="social-link">
+                        <i class="fas fa-coffee"></i> <span class="social-label">ko-fi</span>
+                    </a>
+                    <span class="separator">|</span>
+                    <a href="mailto:contact@sobakintech.xyz" class="social-link">
+                        <i class="fas fa-envelope"></i> <span class="social-label">email</span>
+                    </a>
+                </div>
+            </div>
+
+            <div id="projects-page" class="page">
+                <div class="projects-header">
+                    <h2 class="page-title">projects</h2>
+                    <p class="page-description">some things i've built</p>
+                </div>
+
+                <div class="projects-list">
+                    <div class="project-item">
+                        <div class="project-header">
+                            <h3 class="project-name">manifestor.cc</h3>
+                        </div>
+                        <p class="project-description">download any steam games for free</p>
+                        <div class="project-links">
+                            <a href="https://manifestor.cc" target="_blank" class="project-link">
+                                <i class="fas fa-external-link-alt"></i> live
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="project-item">
+                        <div class="project-header">
+                            <h3 class="project-name">wplace.lol</h3>
+                        </div>
+                        <p class="project-description">the number one guide for wplace.live</p>
+                        <div class="project-links">
+                            <a href="https://github.com/Wplace-lol/wplace.lol" target="_blank" class="project-link">
+                                <i class="fab fa-github"></i> source
+                            </a>
+                            <span class="separator">|</span>
+                            <a href="https://wplace.lol" target="_blank" class="project-link">
+                                <i class="fas fa-external-link-alt"></i> live
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="project-item">
+                        <div class="project-header">
+                            <h3 class="project-name">gork discord bot</h3>
+                        </div>
+                        <p class="project-description">@gork is this true</p>
+                        <div class="project-links">
+                            <a href="https://github.com/sobakintech/gork-discord-bot" target="_blank" class="project-link">
+                                <i class="fab fa-github"></i> source
+                            </a>
+                            <span class="separator">|</span>
+                            <a href="https://discord.com/oauth2/authorize?client_id=1408915123069915230" target="_blank" class="project-link">
+                                <i class="fab fa-discord"></i> invite bot
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="category-header">
+                        <h3 class="category-title">joke websites</h3>
+                    </div>
+
+                    <div class="project-item">
+                        <div class="project-header">
+                            <h3 class="project-name">duckcat.lol</h3>
+                        </div>
+                        <p class="project-description">a silly website about ducks and cats</p>
+                        <div class="project-links">
+                            <a href="https://github.com/sobakintech/duckcat.lol" target="_blank" class="project-link">
+                                <i class="fab fa-github"></i> source
+                            </a>
+                            <span class="separator">|</span>
+                            <a href="https://duckcat.lol" target="_blank" class="project-link">
+                                <i class="fas fa-external-link-alt"></i> live
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="project-item">
+                        <div class="project-header">
+                            <h3 class="project-name">nigalink.online</h3>
+                        </div>
+                        <p class="project-description">a humorous link shortener service</p>
+                        <div class="project-links">
+                            <a href="https://github.com/sobakintech/nigalink.online" target="_blank" class="project-link">
+                                <i class="fab fa-github"></i> source
+                            </a>
+                            <span class="separator">|</span>
+                            <a href="https://nigalink.online" target="_blank" class="project-link">
+                                <i class="fas fa-external-link-alt"></i> live
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <a href="https://github.com/sobakintech/website" target="_blank" class="open-source-note">
+                <i class="fab fa-github"></i> this website is <span class="underline-text">open source</span>
+            </a>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
