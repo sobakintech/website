@@ -48,11 +48,11 @@ body {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background: #000;
-  background-image: linear-gradient(transparent 50%, rgba(0,255,0,0.08) 50%);
-  background-size: 100px 4px;
+  background-image: linear-gradient(transparent 50%, rgba(0,255,0,0.06) 50%);
+  background-size: 2000px 6px;
   background-repeat: repeat;
   background-position: 0 0;
-  animation: flicker .15s infinite linear;
+  background-attachment: fixed;
   pointer-events: none;
   z-index: 0;
 }
@@ -61,11 +61,11 @@ body {
   content: '';
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(to bottom, transparent 96%, rgba(0,255,0,.15) 100%);
-  background-size: 100px 6px;
+  background: linear-gradient(to bottom, transparent 96%, rgba(0,255,0,.12) 100%);
+  background-size: 2000px 8px;
   background-repeat: repeat;
   background-position: 0 0;
-  animation: scanlines .1s linear infinite;
+  background-attachment: fixed;
   pointer-events: none;
   z-index: 0;
 }
