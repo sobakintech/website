@@ -21,11 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (titleIndex < originalTitle.length) {
                     title.textContent += originalTitle.charAt(titleIndex);
                     titleIndex++;
-                    setTimeout(typeTitle, 100);
+                    setTimeout(typeTitle, 60);
                 } else {
                     titleWrapper.classList.remove('typing-cursor');
                     description.classList.add('typing-cursor');
-                    setTimeout(typeDescription, 500);
+                    setTimeout(typeDescription, 300);
                 }
             }
 
@@ -34,13 +34,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (descIndex < originalDescription.length) {
                     description.textContent += originalDescription.charAt(descIndex);
                     descIndex++;
-                    setTimeout(typeDescription, 50);
+                    setTimeout(typeDescription, 30);
                 } else {
                     typingCompleted = true;
                 }
             }
 
-            setTimeout(typeTitle, 500);
+            setTimeout(typeTitle, 300);
         }
 
         runTypingAnimation();
