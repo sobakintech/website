@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="style.css?v=12345">
 </head>
 <body>
+    <div class="terminal-bg-overlay"></div>
     <div class="terminal">
         <div class="top-nav">
             <button class="nav-link active" data-page="home">
@@ -39,6 +40,11 @@
                 </div>
 
                 <div class="discord-activity" id="discord-activity">
+                    <div class="activity-loading" id="activity-loading">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">connecting to discord...</div>
+                    </div>
+                    
                     <div class="activity-details" id="activity-details" style="display: none;">
                         <div class="activity-name" id="activity-name"></div>
                         <div class="activity-description" id="activity-description"></div>
@@ -58,12 +64,6 @@
                         <button id="extras-toggle" class="extras-toggle" type="button">+ more activities</button>
                         <div class="extras-list" id="extras-list"></div>
                     </div>
-
-                    <div class="discord-button-container">
-                        <a href="https://discord.com/users/745203026335236178" target="_blank" class="discord-button">
-                            <i class="fab fa-discord"></i> add on discord
-                        </a>
-                    </div>
                 </div>
 
                 <div class="socials-section">
@@ -81,6 +81,12 @@
                     <span class="separator">|</span>
                     <a href="mailto:contact@sobakintech.xyz" class="social-link">
                         <i class="fas fa-envelope"></i> <span class="social-label">email</span>
+                    </a>
+                </div>
+
+                <div class="discord-button-container">
+                    <a href="https://discord.com/users/745203026335236178" target="_blank" class="discord-button">
+                        <i class="fab fa-discord"></i> <span class="social-label">add on discord</span>
                     </a>
                 </div>
             </div>

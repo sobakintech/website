@@ -113,22 +113,152 @@ document.addEventListener('DOMContentLoaded', function() {
 
 let activitiesCache = [];
 let lastScheduledEnd = null;
+let ws = null;
+let heartbeatInterval = null;
+const USER_ID = '745203026335236178';
 
-async function fetchDiscordActivity() {
+function connectToLanyard() {
+    showLoadingSpinner();
+    
     try {
-        const response = await fetch('https://api.lanyard.rest/v1/users/745203026335236178');
+        ws = new WebSocket('wss://api.lanyard.rest/socket');
+        
+        ws.onopen = function() {
+            console.log('Connected to Lanyard WebSocket');
+            updateLoadingText('retrieving activity data...');
+        };
+        
+        ws.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            handleWebSocketMessage(message);
+        };
+        
+        ws.onclose = function(event) {
+            console.log('Lanyard WebSocket connection closed:', event.code, event.reason);
+            showLoadingSpinner();
+            updateLoadingText('reconnecting...');
+            // Reconnect after 5 seconds
+            setTimeout(connectToLanyard, 5000);
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+            }
+        };
+        
+        ws.onerror = function(error) {
+            console.error('Lanyard WebSocket error:', error);
+            updateLoadingText('connection failed, retrying...');
+        };
+    } catch (error) {
+        console.error('Failed to connect to Lanyard WebSocket:', error);
+        // Fallback to REST API
+        setTimeout(fetchDiscordActivityREST, 1000);
+    }
+}
+
+function handleWebSocketMessage(message) {
+    console.log('Received WebSocket message:', message);
+    
+    switch (message.op) {
+        case 1: // Hello
+            const heartbeatIntervalMs = message.d.heartbeat_interval;
+            console.log('Starting heartbeat with interval:', heartbeatIntervalMs);
+            startHeartbeat(heartbeatIntervalMs);
+            sendInitialize();
+            break;
+            
+        case 0: // Event
+            if (message.t === 'INIT_STATE') {
+                console.log('Received INIT_STATE:', message.d);
+                // For single user subscription, the data is directly in message.d
+                updatePresence(message.d);
+            } else if (message.t === 'PRESENCE_UPDATE') {
+                console.log('Received PRESENCE_UPDATE:', message.d);
+                updatePresence(message.d);
+            }
+            break;
+    }
+}
+
+function startHeartbeat(intervalMs) {
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+    }
+    
+    heartbeatInterval = setInterval(() => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ op: 3 }));
+        }
+    }, intervalMs);
+}
+
+function sendInitialize() {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        const initMessage = {
+            op: 2,
+            d: {
+                subscribe_to_id: USER_ID
+            }
+        };
+        console.log('Sending initialize message:', initMessage);
+        ws.send(JSON.stringify(initMessage));
+    }
+}
+
+function updatePresence(presenceData) {
+    console.log('Updating presence with data:', presenceData);
+    const activities = presenceData.activities || [];
+    console.log('Extracted activities:', activities);
+    activitiesCache = activities;
+    lastScheduledEnd = null;
+    hideLoadingSpinner();
+    renderActivities(activities);
+}
+
+function showLoadingSpinner() {
+    const loadingElement = document.getElementById('activity-loading');
+    const activityDetails = document.getElementById('activity-details');
+    const activityExtras = document.getElementById('activity-extras');
+    
+    if (loadingElement) loadingElement.style.display = 'flex';
+    if (activityDetails) activityDetails.style.display = 'none';
+    if (activityExtras) activityExtras.style.display = 'none';
+}
+
+function hideLoadingSpinner() {
+    const loadingElement = document.getElementById('activity-loading');
+    if (loadingElement) loadingElement.style.display = 'none';
+}
+
+function updateLoadingText(text) {
+    const loadingText = document.querySelector('.loading-text');
+    if (loadingText) loadingText.textContent = text;
+}
+
+// Fallback REST API function
+async function fetchDiscordActivityREST() {
+    showLoadingSpinner();
+    updateLoadingText('loading activity data...');
+    
+    try {
+        const response = await fetch(`https://api.lanyard.rest/v1/users/${USER_ID}`);
         const data = await response.json();
 
         if (data.success) {
             const activities = data.data.activities || [];
             activitiesCache = activities;
             lastScheduledEnd = null;
+            hideLoadingSpinner();
             renderActivities(activities);
         }
     } catch (error) {
         console.error('Failed to fetch Discord activity:', error);
-        const activityDetails = document.getElementById('activity-details');
-        if (activityDetails) activityDetails.style.display = 'none';
+        updateLoadingText('failed to load activity data');
+        setTimeout(() => {
+            const activityDetails = document.getElementById('activity-details');
+            if (activityDetails) activityDetails.style.display = 'none';
+            hideLoadingSpinner();
+        }, 2000);
     }
 }
 
@@ -147,22 +277,7 @@ function renderActivities(activities) {
     if (!activities || activities.length === 0) {
         activityDetails.style.display = 'none';
         if (activityExtras) activityExtras.style.display = 'none';
-    const discordBtn = document.querySelector('.discord-button');
-    const socials = document.querySelector('.socials-section');
-        if (discordBtn && socials) {
-            if (!socials.contains(discordBtn)) {
-                let sep = socials.querySelector('.discord-separator');
-                if (!sep) {
-                    sep = document.createElement('span');
-                    sep.className = 'separator discord-separator';
-                    sep.textContent = '|';
-                    socials.appendChild(sep);
-                }
-                socials.appendChild(discordBtn);
-                if (discordActivity) discordActivity.style.display = 'none';
-                discordBtn.classList.add('discord-in-socials');
-            }
-        }
+        if (discordActivity) discordActivity.style.display = 'none';
         return;
     }
 
@@ -204,24 +319,16 @@ function renderActivities(activities) {
     }
 
     activityDetails.style.display = 'block';
-
-    const discordBtn = document.querySelector('.discord-button');
-    const discordContainer = document.querySelector('.discord-button-container');
-    const socials = document.querySelector('.socials-section');
-    if (discordBtn && discordContainer) {
-        if (discordBtn.parentElement && socials && discordBtn.parentElement.isSameNode(socials)) {
-            const sep = socials.querySelector('.discord-separator');
-            if (sep) sep.remove();
-            discordContainer.appendChild(discordBtn);
-            if (discordActivity) discordActivity.style.display = '';
-            discordBtn.classList.remove('discord-in-socials');
-        }
-    }
+    if (discordActivity) discordActivity.style.display = 'block';
 
     if (activityExtras && extrasList && extrasToggle) {
         if (activities.length > 1) {
+            // Preserve the current expansion state
             const wasOpen = activityExtras.classList.contains('open');
+            
+            // Clear and rebuild the extras list
             extrasList.innerHTML = '';
+            
             for (let i = 1; i < activities.length; i++) {
                 const act = activities[i];
                 const div = document.createElement('div');
@@ -279,13 +386,25 @@ function renderActivities(activities) {
 
                 extrasList.appendChild(div);
             }
+            
+            // Show the extras section
             activityExtras.style.display = 'block';
-            extrasToggle.textContent = `+ more activities (${activities.length - 1})`;
+            
+            // Update button text based on current state
+            extrasToggle.textContent = wasOpen ? `- hide activities` : `+ more activities (${activities.length - 1})`;
+            
+            // Set up the toggle functionality
             extrasToggle.onclick = () => {
                 const nowOpen = activityExtras.classList.toggle('open');
                 extrasToggle.textContent = nowOpen ? `- hide activities` : `+ more activities (${activities.length - 1})`;
             };
-            if (wasOpen) activityExtras.classList.add('open'); else activityExtras.classList.remove('open');
+            
+            // Restore the previous expansion state
+            if (wasOpen) {
+                activityExtras.classList.add('open');
+            } else {
+                activityExtras.classList.remove('open');
+            }
         } else {
             activityExtras.style.display = 'none';
         }
@@ -325,8 +444,7 @@ function formatTimeMMSS(milliseconds) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchDiscordActivity();
-    setInterval(fetchDiscordActivity, 10000);
+    connectToLanyard();
     setInterval(() => {
         if (!activitiesCache || activitiesCache.length === 0) return;
         const primary = activitiesCache[0];
